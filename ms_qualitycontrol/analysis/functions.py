@@ -142,27 +142,5 @@ def create_annotations(data, threshold, col_names):
     return annotations
 
 
-# def create_annotations_coag(data, threshold, col_names):
-#     data_above_threshold, data_above_threshold_indices = [], []
-#     data_below_threshold, data_below_threshold_indices = [], []
-#     lower_threshold = 20
-#     upper_threshold = 100
-#     for i, dd in enumerate(data):
-#         if dd > 40 and dd > upper_threshold:
-#             data_above_threshold.append(round(dd, 4))
-#             data_above_threshold_indices.append(i)
-#         if dd < 40 and dd > lower_threshold:
-#             data_below_threshold.append(round(dd, 4))
-#             data_below_threshold_indices.append(i)
-#     names_above = [col_names[i] for i in data_above_threshold_indices]
-#     names_below = [col_names[i] for i in data_below_threshold_indices]
-#     annotations = []
-#     for x, y, z in zip(data_above_threshold_indices, data_above_threshold, names_above):
-#         annotations.append(make_annotation_item(x, y, z, '#F19F4D'))
-#     for x, y, z in zip(data_below_threshold_indices, data_below_threshold, names_below):
-#         annotations.append(make_annotation_item(x, y, z, 'darkgreen'))
-#     return annotations
-
-
 def extract_markers(df, column, sort=True, top=50):
     return df.sort_values(column, ascending=sort)[:top]
