@@ -11,9 +11,9 @@ def clean_directory(file_path):
         for name in dirs:
             os.rmdir(os.path.join(root, name))
 
-logo = 'images/logo.png'
-marker = 'images/figure-markers.png'
-warning = 'images/warning-icon.png'
+logo = 'Images/logo.png'
+marker = 'Images/figure-markers.png'
+warning = 'Images/warning-icon.png'
 logo_encoded = base64.b64encode(open(logo, 'rb').read())
 markers_encoded = base64.b64encode(open(marker, 'rb').read())
 warning_encoded = base64.b64encode(open(warning, 'rb').read())
