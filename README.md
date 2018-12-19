@@ -16,7 +16,7 @@ pipeline is illustrated in the following scheme:
 Before entering the platform, MS data are analyzed by MaxQuant or similar software packages. 
 The resulting file, an annotated list of protein intensities (‘proteinGroups.txt’), 
 is uploaded on the web page **_(A)_**. Upon successful verification **_(B)_** and 
-comparison to a list of contamination markers **_(C))**, a data structure is built 
+comparison to a list of contamination markers **_(C))_**, a data structure is built 
 in Python using a list of built-in Python libraries (NumPy, Pandas, SciPy, 
 Scikit-learn) **_(D)_**. Through the user-friendly web interface **_(E)_**, 
 graphically illustrated results for the quality assessments of proteomics data 
