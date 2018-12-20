@@ -1,4 +1,4 @@
-# Quality-Control-of-the-Plasma-Proteome Platform
+# Quality-Control-of-the-Plasma-Proteome Platform [![DOI](https://zenodo.org/badge/162268441.svg)](https://zenodo.org/badge/latestdoi/162268441)
 (The copyright holder for this preprint https://doi.org/10.1101/478305)
 
 This platform is developed to help clinical researches 
