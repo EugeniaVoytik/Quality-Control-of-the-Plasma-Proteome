@@ -1,4 +1,6 @@
 # Quality-Control-of-the-Plasma-Proteome Platform
+(The copyright holder for this preprint https://doi.org/10.1101/478305)
+
 This platform is developed to help clinical researches 
 - to determine the overall quality of each sample in a clinical study, 
 - to assess the quality of the whole study in terms of potential systematic biases 
@@ -34,5 +36,6 @@ are presented online on the web page **_(F)_**.
 ```
 
 ## Authors
+Eugenia Voytik - _Department of Proteomics and Signal Transduction, Max Planck Institute of Biochemistry, 
+Martinsried, Germany_
 
-The copyright holder for this preprint https://doi.org/10.1101/478305.
