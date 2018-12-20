@@ -36,6 +36,5 @@ are presented online on the web page **_(F)_**.
 ```
 
 ## Authors
-Eugenia Voytik - _Department of Proteomics and Signal Transduction, Max Planck Institute of Biochemistry, 
-Martinsried, Germany_
+All authors and contributors are mentioned in the article(https://doi.org/10.1101/478305).
 
