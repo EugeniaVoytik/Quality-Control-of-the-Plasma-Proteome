@@ -2,16 +2,13 @@
 (The copyright holder for this preprint https://doi.org/10.1101/478305)
 
 This platform is developed to help clinical researches 
-- to determine the overall quality of each sample in a clinical study, 
+- to determine the overall quality of each sample in a clinical study
 - to assess the quality of the whole study in terms of potential systematic biases 
-- to evaluate individual, significantly altered proteins in case-control comparisons.
-
-Moreover, this concept of an automated approach in plasma proteome profiling can decrease the time for manual analysis 
-of analytical data and prevent biases in biomarker studies.
+- to evaluate individual, significantly altered proteins in case-control comparisons
 
 ## Usage
 The principle operation for the “Quality Control of the Plasma Proteome” online platform in Plasma Proteome Profiling 
-pipeline is illustrated in the following scheme:
+is illustrated in the following scheme:
 
 ![Computational Quality Control of the Plasma Proteome workflow](Images/workflow.png)
 
