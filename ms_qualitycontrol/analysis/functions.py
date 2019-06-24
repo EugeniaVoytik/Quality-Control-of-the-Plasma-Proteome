@@ -6,12 +6,17 @@ import re
 import itertools
 import statistics
 
+
 def select_cols(columns):
     return 'LFQ' in columns or columns in ['Gene names', 'Protein IDs', 'Protein names']
 
 
 def read_own_table(filepath):
-    df = pd.read_table(filepath, usecols=select_cols, low_memory=False)
+    extent = filepath.split('.')[-1]
+    if extent == 'txt':
+        df = pd.read_table(filepath, usecols=select_cols, low_memory=False)
+    elif extent == 'csv':
+        df = pd.read_csv(filepath, usecols=select_cols, low_memory=False)
     return df
 
 
@@ -49,21 +54,20 @@ def get_reversed_list_of_col(df, searched_value):
             columns.append([column for column in df.columns if each not in column.lower()])
         return list(itertools.chain.from_iterable(columns))
 
-def two_sample_t_test(control, samples, df):
+
+def two_sample_t_test(control, samples):
     t_stat, p_val = stats.ttest_ind(control, samples, axis=1, nan_policy='omit')
-    df['p_val'], df['(-)log10_p_val'] = p_val, -np.log10(p_val)
-    return df
+    return p_val, -np.log10(p_val)
 
 
-def calculate_mean(control, samples, df):
-    df['control_mean'], df['samples_mean'] = np.mean(control, axis=1), np.mean(samples, axis=1)
-    return df
+def calculate_mean(control, samples):
+    return np.mean(control, axis=1), np.mean(samples, axis=1)
 
 
 def calculate_LFC(df):
-    df['L10FC'] = [np.log10(x / y) if (y != 0 and (x / y) != 0) else None
-                   for x, y in zip(df['samples_mean'], df['control_mean'])]
-    return df
+    l10fc = [np.log10(x / y) if (y != 0 and (x / y) != 0) else None
+             for x, y in zip(df['samples_mean'], df['control_mean'])]
+    return l10fc
 
 
 def select_LFQ_cols(columns):
@@ -72,8 +76,8 @@ def select_LFQ_cols(columns):
 
 def filter_valid_values(df, index, numeric_columns, percent, ax):
     df_copied = df.set_index(index)[numeric_columns]
-    new_df = df_copied.dropna(thresh=int(len(df_copied.columns) * percent), axis=ax)
-    return new_df.reset_index()
+    df_copied = df_copied.dropna(thresh=int(len(df_copied.columns) * percent), axis=ax)
+    return df_copied.reset_index()
 
 
 def get_list_of_indices(df, column, mask, separator):
@@ -112,14 +116,15 @@ def extract_val_from_col(df, column, separator):
 
 
 def normal_ratio(df, marker, num_std, reverse=False):
-    if reverse==False:
+    if reverse == False:
         test = np.array(np.sum(marker, axis=0) / np.sum(df, axis=0), dtype=float).round(decimals=4)
         std_bn_samples = (statistics.harmonic_mean(test) + np.std(test) * num_std).round(decimals=4)
         return test, std_bn_samples
     else:
-        test = 1/np.array(np.sum(marker, axis=0) / np.sum(df, axis=0), dtype=float).round(decimals=4)
+        test = 1 / np.array(np.sum(marker, axis=0) / np.sum(df, axis=0), dtype=float).round(decimals=4)
         std_bn_samples = (statistics.harmonic_mean(test) + np.std(test) * num_std).round(decimals=4)
         return test, std_bn_samples
+
 
 def make_annotation_item(x, y, z, color):
     return {'xref': 'x', 'yref': 'y', 'x': x, 'y': y, 'text': '#%s' % z.replace('LFQ', '').replace(' intensity', ''),

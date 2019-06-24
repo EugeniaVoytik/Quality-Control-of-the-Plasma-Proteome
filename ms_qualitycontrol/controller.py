@@ -1,9 +1,9 @@
 import itertools
+import math
 import urllib
 
 import dash_core_components as dcc
 import dash_html_components as html
-import numpy as np
 import pandas as pd
 from dash.dependencies import Input, Output
 
@@ -92,6 +92,7 @@ def check_input_control(jsonified_df, sample_input, example, submit):
      Input('output-control', 'children'),
      Input('output-samples', 'children')])
 def clean_data(jsonified_df, control_input, sample_input, submit, example, warning_control, warning_samples):
+    control, samples, df = None, None, None
     if example:
         df = pd.read_json(jsonified_df, orient='split')
         columns_control_group = fn.get_list_of_col(df, fn.lower_input('TP1'))
@@ -109,9 +110,9 @@ def clean_data(jsonified_df, control_input, sample_input, submit, example, warni
             columns_samples_group = fn.get_list_of_col(df, fn.lower_input(sample_input))
             samples = df[columns_samples_group].apply(pd.to_numeric)
     # statistical analysis
-    df = fn.two_sample_t_test(control, samples, df)
-    df = fn.calculate_mean(control, samples, df)
-    df = fn.calculate_LFC(df)
+    df['p_val'], df['(-)log10_p_val'] = fn.two_sample_t_test(control, samples)
+    df['control_mean'], df['samples_mean'] = fn.calculate_mean(control, samples)
+    df['L10FC'] = fn.calculate_LFC(df)
     df = df.dropna(subset=['Gene names'])
     df_filtered = fn.filter_valid_values(df, index=fn.get_reversed_list_of_col(df, fn.lower_input('LFQ')),
                                      numeric_columns=fn.get_list_of_col(df, fn.lower_input('LFQ')), percent=0.5, ax=0)
@@ -124,9 +125,8 @@ def clean_data(jsonified_df, control_input, sample_input, submit, example, warni
 def prepare_data_heatmap(jsonified_df):
     df = pd.read_json(jsonified_df, orient='split')
     data_filt = df.set_index('Gene names')[fn.get_list_of_col(df, fn.lower_input('LFQ'))]
-    data_filt_log = np.log10(data_filt)
-    data = data_filt_log.T.corr(method='pearson')
-    data.to_csv('test_heatmap_data.csv')
+    data_filt = data_filt.applymap(lambda x: math.log10(x) if x != 0 else 0)
+    data = data_filt.T.corr(method='pearson')
     return data.to_json(date_format='iso', orient='split')
 
 

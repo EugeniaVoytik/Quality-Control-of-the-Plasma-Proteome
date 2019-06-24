@@ -44,7 +44,7 @@ def apply_app_layout(app):
                         service="/upload_resumable",
                         textLabel="Drag and Drop to upload!",
                         startButton=False,
-                        filetypes=['txt'],
+                        filetypes=['txt', 'csv'],
                         completeStyle={'background-color': '#F19F4D', 'font-size': '30px', 'font-size': '1.2vw',
                                        'font-family': 'Arial', 'white-space': 'nowrap', 'padding': '45px',
                                        'color': 'white', 'display': 'fixed', 'justify-content': 'center',
