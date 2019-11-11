@@ -1,3 +1,4 @@
 theme: jekyll-theme-slate
 title: Welcome to Quality control of plasma proteome's homepage!
 description: test
+show_downloads: true
