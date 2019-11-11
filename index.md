@@ -1,124 +1,36 @@
+# Quality-Control-of-the-Plasma-Proteome Platform [![DOI](https://zenodo.org/badge/162268441.svg)](https://zenodo.org/badge/latestdoi/162268441)
+(The copyright holder for this preprint https://doi.org/10.1101/478305)
 
----
-layout: default
----
+This platform is developed to help clinical researches 
+- to determine the overall quality of each sample in a clinical study
+- to assess the quality of the whole study in terms of potential systematic biases 
+- to evaluate individual, significantly altered proteins in case-control comparisons
 
-Text can be **bold**, _italic_, or ~~strikethrough~~.
+## Usage
+The principle operation for the “Quality Control of the Plasma Proteome” online platform in Plasma Proteome Profiling 
+is illustrated in the following scheme:
 
-[Link to another page](./another-page.html).
+![Computational Quality Control of the Plasma Proteome workflow](Images/workflow.png)
 
-There should be whitespace between paragraphs.
+Before entering the platform, MS data are analyzed by MaxQuant or similar software packages. 
+The resulting file, an annotated list of protein intensities (‘proteinGroups.txt’), 
+is uploaded on the web page **_(A)_**. Upon successful verification **_(B)_** and 
+comparison to a list of contamination markers **_(C)_**, a data structure is built 
+in Python using a list of built-in Python libraries (NumPy, Pandas, SciPy, 
+Scikit-learn) **_(D)_**. Through the user-friendly web interface **_(E)_**, 
+graphically illustrated results for the quality assessments of proteomics data 
+are presented online on the web page **_(F)_**. 
 
-There should be whitespace between paragraphs. We recommend including a README, or a file with information about your project.
 
-# Header 1
-
-This is a normal paragraph following a header. GitHub is a code hosting platform for version control and collaboration. It lets you and others work together on projects from anywhere.
-
-## Header 2
-
-> This is a blockquote following a header.
->
-> When something is important enough, you do it even if the odds are not in your favor.
-
-### Header 3
-
-```js
-// Javascript code with syntax highlighting.
-var fun = function lang(l) {
-  dateformat.i18n = require('./lang/' + l)
-  return true;
-}
+## Deployment (python3)
+```
+* git clone https://github.com/EugeniaVoytik/Quality-Control-of-the-Plasma-Proteome.git
+* cd Quality-Control-of-the-Plasma-Proteome
+* virtualenv -p python3 env
+* source env/bin/activate
+* pip install -r requirements.txt
+* python run.py
 ```
 
-```ruby
-# Ruby code with syntax highlighting
-GitHubPages::Dependencies.gems.each do |gem, version|
-  s.add_dependency(gem, "= #{version}")
-end
-```
-
-#### Header 4
-
-*   This is an unordered list following a header.
-*   This is an unordered list following a header.
-*   This is an unordered list following a header.
-
-##### Header 5
-
-1.  This is an ordered list following a header.
-2.  This is an ordered list following a header.
-3.  This is an ordered list following a header.
-
-###### Header 6
-
-| head1        | head two          | three |
-|:-------------|:------------------|:------|
-| ok           | good swedish fish | nice  |
-| out of stock | good and plenty   | nice  |
-| ok           | good `oreos`      | hmm   |
-| ok           | good `zoute` drop | yumm  |
-
-### There's a horizontal rule below this.
-
-* * *
-
-### Here is an unordered list:
-
-*   Item foo
-*   Item bar
-*   Item baz
-*   Item zip
-
-### And an ordered list:
-
-1.  Item one
-1.  Item two
-1.  Item three
-1.  Item four
-
-### And a nested list:
-
-- level 1 item
-  - level 2 item
-  - level 2 item
-    - level 3 item
-    - level 3 item
-- level 1 item
-  - level 2 item
-  - level 2 item
-  - level 2 item
-- level 1 item
-  - level 2 item
-  - level 2 item
-- level 1 item
-
-### Small image
-
-![Octocat](https://github.githubassets.com/images/icons/emoji/octocat.png)
-
-### Large image
-
-![Branching](https://guides.github.com/activities/hello-world/branching.png)
-
-
-### Definition lists can be used with HTML syntax.
-
-<dl>
-<dt>Name</dt>
-<dd>Godzilla</dd>
-<dt>Born</dt>
-<dd>1952</dd>
-<dt>Birthplace</dt>
-<dd>Japan</dd>
-<dt>Color</dt>
-<dd>Green</dd>
-</dl>
-
-```
-Long, single-line code blocks should not wrap. They should horizontally scroll if they are too long. This line should be long enough to demonstrate this.
-```
-
-```
-The final element.
-```
+## Authors
+All authors and contributors are mentioned in the article(https://doi.org/10.1101/478305).
