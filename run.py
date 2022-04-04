@@ -24,7 +24,7 @@ warning_encoded = base64.b64encode(open(warning, 'rb').read())
 
 dir_path = "uploads"
 
-example_file = 'data/example_Weight_loss_study.txt'
+example_file = 'data/proteinGroups_Weight_loss_study.txt'
 
 platelet_contamination_markers = pd.read_excel(
     'data/Marker List.xlsx',
