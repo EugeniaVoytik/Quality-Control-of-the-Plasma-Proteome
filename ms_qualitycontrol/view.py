@@ -25,7 +25,7 @@ def apply_app_layout(app):
                             'padding-left': 20,
                         }
                     )
-                ], href='https://github.com/MannLabs/Quality-Control-of-the-Plasma-Proteome'),
+                ], href='https://github.com/MannLabs/Quality-Control-of-the-Plasma-Proteome', target="_blank"),
                 html.H1("Quality Control of the Plasma Proteome"),
                 html.Img(
                     src='data:image/png;base64,{}'.format(
@@ -89,6 +89,7 @@ def apply_app_layout(app):
                         multiple=True,
                         type='text',
                         value='',
+                        debounce=True
                     ),
                     html.Div(id='output-control', style={'height': '20px'})
                 ], className='input_control',
@@ -100,6 +101,7 @@ def apply_app_layout(app):
                         multiple=True,
                         type='text',
                         value='',
+                        debounce=True
                     ),
                     html.Div(id='output-samples', style={'height': '20px'})
                 ], className='input_samples',
@@ -134,7 +136,8 @@ def apply_app_layout(app):
                 ),
                 html.Button(
                     'Example',
-                    id='button-example'
+                    id='button-example',
+                    n_clicks=0,
                 ),
             ], className='four columns markers')
         ], className='row',
