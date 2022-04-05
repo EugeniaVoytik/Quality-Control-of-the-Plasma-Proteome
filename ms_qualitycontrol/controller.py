@@ -6,6 +6,7 @@ import dash_html_components as html
 import numpy as np
 import pandas as pd
 from dash.dependencies import Input, Output, State
+from dash import callback_context
 
 import ms_qualitycontrol.analysis.functions as fn
 import ms_qualitycontrol.analysis.plotting_functions as plot
@@ -40,19 +41,25 @@ def update_layout(jsonified_df):
 
 @app.callback(
     Output('output', 'children'),
-    [Input('upload-data', 'isCompleted'),
+    [Input('button', 'n_clicks'),
      Input('button-example', 'n_clicks')],
     [State('upload-data', 'fileNames'),
      State('upload-data', 'upload_id')]
 )
-def upload_files(is_completed, example, file_names, upload_id):
-    if example is not None:
+def upload_files(
+    _submit_btn_clicks,
+    _example_btn_clicks,
+    file_names,
+    upload_id
+):
+    changed_id = [p['prop_id'] for p in callback_context.triggered][0]
+    if 'button-example' in changed_id:
         df = fn.read_own_table(example_file)
         return df.to_json(date_format='iso', orient='split')
-    elif is_completed:
+    elif 'button' in changed_id:
         path = dir_path + f'/{upload_id}/'
         df = fn.read_own_table(path + file_names[0])
-        fn.delete_uploaded_file(path, file_names[0])
+        # fn.delete_uploaded_file(path, file_names[0])
         return df.to_json(date_format='iso', orient='split')
 
 
@@ -60,15 +67,14 @@ def upload_files(is_completed, example, file_names, upload_id):
     Output('output-control', 'children'),
     [Input('output', 'children'),
      Input('input-control', 'value'),
-     Input('button-example', 'n_clicks'),
      Input('button', 'n_clicks')])
 def check_input_control(
     jsonified_df,
     control_input,
-    example,
-    submit
+    _submit_btn_clicks
 ):
-    if all([jsonified_df, submit]) and example is None:
+    changed_id = [p['prop_id'] for p in callback_context.triggered][0]
+    if jsonified_df and 'button' in changed_id:
         df = pd.read_json(jsonified_df, orient='split')
         columns_control_group = fn.get_list_of_col(
             df,
@@ -97,27 +103,30 @@ def check_input_control(
                     present in the column names.'
                 )
             ], className='warning-control')
+        else:
+            None
 
 
 @app.callback(
     Output('output-samples', 'children'),
     [Input('output', 'children'),
      Input('input-samples', 'value'),
-     Input('button-example', 'n_clicks'),
      Input('button', 'n_clicks')])
 def check_input_control_columns(
     jsonified_df,
     sample_input,
-    example,
-    submit
+    _submit_btn_clicks,
 ):
-    if all([jsonified_df, sample_input, submit]) and example is None:
+    if not sample_input:
+        return None
+    changed_id = [p['prop_id'] for p in callback_context.triggered][0]
+    if jsonified_df and 'button' in changed_id:
         df = pd.read_json(jsonified_df, orient='split')
         columns_samples_group = fn.get_list_of_col(
             df,
             fn.lower_input(sample_input)
         )
-        if not all([columns_samples_group, sample_input]):
+        if not columns_samples_group:
             return html.Div([
                 html.Img(
                     src='data:image/png;base64,{}'.format(
@@ -129,6 +138,8 @@ def check_input_control_columns(
                     present in the file columns.'
                 )
             ], className='warning-samples')
+        else:
+            return None
 
 
 # to store a created dataframe based on the uploaded .txt file
@@ -145,20 +156,21 @@ def clean_data(
     jsonified_df,
     control_input,
     sample_input,
-    submit,
-    example,
+    _submit_btn_clicks,
+    _example_btn_clicks,
     warning_control,
     warning_samples
 ):
+    changed_id = [p['prop_id'] for p in callback_context.triggered][0]
     control = samples = df = pd.DataFrame()
-    if example:
+    if 'button-example' in changed_id:
         df = pd.read_json(jsonified_df, orient='split')
         columns_control_group = fn.get_list_of_col(df, fn.lower_input('TP1'))
         control = df[columns_control_group].apply(pd.to_numeric)
         columns_samples_group = fn.get_list_of_col(df, fn.lower_input('TP4'))
         samples = df[columns_samples_group].apply(pd.to_numeric)
-    elif all([jsonified_df, control_input, submit]) \
-            and not all([warning_control, warning_samples]):
+    elif 'button' in changed_id and warning_control is None and \
+            warning_samples is None:
         df = pd.read_json(jsonified_df, orient='split')
         columns_control_group = fn.get_list_of_col(
             df,
