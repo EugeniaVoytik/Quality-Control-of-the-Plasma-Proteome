@@ -13,7 +13,11 @@ def select_cols(columns):
 
 
 def read_own_table(filepath):
-    df = pd.read_table(filepath, usecols=select_cols, low_memory=False)
+    extent = filepath.split('.')[-1]
+    if extent == 'txt':
+        df = pd.read_table(filepath, usecols=select_cols, low_memory=False)
+    elif extent == 'csv':
+        df = pd.read_csv(filepath, usecols=select_cols, low_memory=False)
     return df
 
 
@@ -80,9 +84,9 @@ def calculate_mean(control, samples, df):
 
 
 def calculate_LFC(df):
-    df['L10FC'] = [np.log10(x / y) if (y != 0 and (x / y) != 0) else None
-                   for x, y in zip(df['samples_mean'], df['control_mean'])]
-    return df
+    l10fc = [np.log10(x / y) if (y != 0 and (x / y) != 0) else None
+             for x, y in zip(df['samples_mean'], df['control_mean'])]
+    return l10fc
 
 
 def select_LFQ_cols(columns):

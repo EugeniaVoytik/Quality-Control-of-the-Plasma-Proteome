@@ -8,3 +8,4 @@ app = dash.Dash(
 )
 
 apply_app_layout(app)
+
