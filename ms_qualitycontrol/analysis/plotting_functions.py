@@ -4,35 +4,46 @@ import plotly.graph_objs as go
 from scipy.cluster.hierarchy import linkage
 
 
-def getComplexHeatmapFigure(data, annotation):
+def get_heatmap(data, annotation):
     # Initialize figure by creating upper dendrogram
-    figure = FF.create_dendrogram(data.values, orientation='bottom', labels=data.columns,
-                                  linkagefun=lambda x: linkage(data, 'ward', metric='euclidean'),
-                                  colorscale=list(['dimgray', 'dimgray', 'dimgray', 'dimgray',
-                                                   'dimgray', 'dimgray', 'dimgray']))
+    figure = FF.create_dendrogram(
+        data.values,
+        orientation='bottom',
+        labels=data.columns,
+        linkagefun=lambda x: linkage(data, 'ward', metric='euclidean'),
+        colorscale=list(['dimgray', 'dimgray', 'dimgray',
+                        'dimgray', 'dimgray', 'dimgray', 'dimgray'])
+    )
     for i in range(len(figure['data'])):
         figure['data'][i]['yaxis'] = 'y2'
+
     # Create Side Dendrogram
-    dendro_side = FF.create_dendrogram(data.values, orientation='right',  # hovertext=list(data.columns),
-                                       # labels=data.columns,
-                                       linkagefun=lambda x: linkage(data, 'ward', metric='euclidean'),
-                                       colorscale=list(['dimgray', 'dimgray', 'dimgray', 'dimgray',
-                                                        'dimgray', 'dimgray', 'dimgray']))
+    dendro_side = FF.create_dendrogram(
+        data.values,
+        orientation='right',
+        linkagefun=lambda x: linkage(data, 'ward', metric='euclidean'),
+        colorscale=list(['dimgray', 'dimgray', 'dimgray', 'dimgray',
+                        'dimgray', 'dimgray', 'dimgray'])
+    )
 
     for i in range(len(dendro_side['data'])):
         dendro_side['data'][i]['xaxis'] = 'x2'
-    # Add Side Dendrogram Data to Figure
-    figure['data'].extend(dendro_side['data'])
+
+    for dendro_side_data in dendro_side['data']:
+        figure.add_trace(dendro_side_data)
+
     dendro_leaves = dendro_side['layout']['yaxis']['ticktext']
     dendro_leaves = list(map(int, dendro_leaves))
     heat_data = data.values
     heat_data = heat_data[dendro_leaves, :]
     heat_data = heat_data[:, dendro_leaves]
+
+    # Create Heatmap
     heatmap = [
         go.Heatmap(
             x=dendro_leaves,
             y=dendro_leaves,
-            z=heat_data.round(4),
+            z=heat_data,
             zmin=-1,
             zmax=1,
             colorscale=[[0.0, 'dodgerblue'], [0.5, 'white'], [1.0, '#FF3B3F']],
@@ -43,21 +54,25 @@ def getComplexHeatmapFigure(data, annotation):
                 tickvals=[-1, -0.5, 0, 0.5, 1],
                 ticks='outside',
                 len=0.83),
-            selectedpoints={},
             name='',
-            hoverlabel={'bgcolor': 'dimgray', 'font': {'family': 'Arial', 'size': 13, 'color': 'white'}}
+            hoverlabel={'bgcolor': 'dimgray', 'font': {
+                'family': 'Arial', 'size': 13, 'color': 'white'}}
         )
     ]
 
     heatmap[0]['x'] = figure['layout']['xaxis']['tickvals']
     heatmap[0]['y'] = dendro_side['layout']['yaxis']['tickvals']
 
-    # Add Heatmap Data to Figure
-    figure['data'].extend(heatmap)
+    # # Add Heatmap Data to Figure
+    for heatmap_data in heatmap:
+        figure.add_trace(heatmap_data)
+
     # Edit Layout
     figure['layout'].update({
-        'width': 740, 'height': 740, 'margin': {'l': 20, 'b': 50, 't': 20, 'r': 0},
-        'showlegend': False, 'hovermode': 'closest', 'paper_bgcolor': '#EFEFEF',
+        'width': 710, 'height': 710, 'margin': {
+            'l': 20, 'b': 50, 't': 20, 'r': 0},
+        'showlegend': False, 'hovermode': 'closest',
+        'paper_bgcolor': '#EFEFEF',
         'plot_bgcolor': '#EFEFEF', 'annotations': annotation
     })
     # Edit xaxis
@@ -86,8 +101,10 @@ def getComplexHeatmapFigure(data, annotation):
                                       'showticklabels': False,
                                       'ticks': ""})
 
-    figure['layout']['yaxis']['ticktext'] = figure['layout']['xaxis']['ticktext']
-    figure['layout']['yaxis']['tickvals'] = figure['layout']['xaxis']['tickvals']
+    figure['layout']['yaxis']['ticktext'] = \
+        figure['layout']['xaxis']['ticktext']
+    figure['layout']['yaxis']['tickvals'] = \
+        figure['layout']['xaxis']['tickvals']
 
     # Edit yaxis2
     figure['layout'].update({'yaxis2': {'domain': [.8, 1],
@@ -97,12 +114,21 @@ def getComplexHeatmapFigure(data, annotation):
                                         'zeroline': False,
                                         'showticklabels': False,
                                         'ticks': ""}})
-    markers = dict(zip(figure['layout']['xaxis']['ticktext'], figure['layout']['xaxis']['tickvals']))
-
+    markers = dict(zip(
+        figure['layout']['xaxis']['ticktext'],
+        figure['layout']['xaxis']['tickvals'])
+    )
     return figure, markers
 
 
-def getVolcanoPlot(data, color, marker_size=8, name=None, opacity=1, marker_symbol='circle'):
+def get_volcano_figure(
+    data,
+    color,
+    marker_size=8,
+    name=None,
+    opacity=1,
+    marker_symbol='circle'
+):
     return go.Scatter(
         x=data['L10FC'],
         y=data['(-)log10_p_val'],
@@ -118,12 +144,12 @@ def getVolcanoPlot(data, color, marker_size=8, name=None, opacity=1, marker_symb
                 width=1,
                 color='dimgray'),
             showscale=False),
-        hoverinfo='x' + 'y' + 'text')
+        hoverinfo='x+y+text')
 
 
-def getLayoutVolcanoPlot():
+def get_volcano_layout():
     return go.Layout(
-        height=700, width=500,
+        height=680, width=500,
         margin={'l': 40, 'b': 40, 't': 40, 'r': 20},
         paper_bgcolor='#EFEFEF',
         plot_bgcolor='#EFEFEF',
@@ -140,7 +166,7 @@ def getLayoutVolcanoPlot():
             autorange=False,
             showgrid=True,
             showline=True,
-            autotick=True,
+            # autotick=True,
             ticks='',
             showticklabels=True),
         yaxis=dict(
@@ -154,7 +180,7 @@ def getLayoutVolcanoPlot():
             autorange=False,
             showgrid=True,
             showline=False,
-            autotick=True,
+            # autotick=True,
             ticks='',
             showticklabels=True
         ),
@@ -169,7 +195,7 @@ def getLayoutVolcanoPlot():
     )
 
 
-def getBarChart(x, y, color):
+def get_barchart_figure(x, y, color):
     return [go.Bar(
         x=x,
         y=y,
@@ -179,77 +205,170 @@ def getBarChart(x, y, color):
     )]
 
 
-def getLayoutBarChart(threshold, yaxis_title, annotations):
+def get_barchart_layout(
+    threshold,
+    yaxis_title,
+    annotations
+):
     return go.Layout(
         margin={'l': 70, 'b': 100, 't': 70, 'r': 70},
         paper_bgcolor='#EFEFEF',
         plot_bgcolor='#EFEFEF',
-        xaxis=dict(title='Sample name', showticklabels=True, tickangle=70, autorange=True, showgrid=True, showline=True,
-                   titlefont={'family': 'Arial, sans-serif', 'size': 16, 'color': 'black'}, zeroline=True,
-                   tickfont={'size': 10, 'color': 'dimgray'}, ticks='', ),
-        yaxis=dict(title=yaxis_title, titlefont=dict(family='Arial, sans-serif', size=16, color='black'),
-                   autorange=True, showgrid=True, zeroline=False, showline=False,
-                   ticks='', showticklabels=True, tickfont={'size': 10, 'color': 'dimgray'}),
+        xaxis=dict(
+            title='Sample name',
+            showticklabels=True,
+            tickangle=70,
+            autorange=True,
+            showgrid=True,
+            showline=True,
+            titlefont={
+                'family': 'Arial, sans-serif',
+                'size': 16,
+                'color': 'black'
+            },
+            zeroline=True,
+            tickfont={'size': 10, 'color': 'dimgray'},
+            ticks='', ),
+        yaxis=dict(
+            title=yaxis_title,
+            titlefont=dict(
+                family='Arial, sans-serif',
+                size=16,
+                color='black'
+            ),
+            autorange=True,
+            showgrid=True,
+            zeroline=False,
+            showline=False,
+            ticks='',
+            showticklabels=True,
+            tickfont={'size': 10, 'color': 'dimgray'}
+          ),
         shapes=[{
-            'type': 'line', 'xref': 'paper', 'opacity': 0.8, 'x0': 0, 'y0': threshold, 'x1': 1, 'y1': threshold,
+            'type': 'line', 'xref': 'paper', 'opacity': 0.8, 'x0': 0,
+            'y0': threshold, 'x1': 1, 'y1': threshold,
             'line': {'color': 'red', 'width': 2, 'dash': 'dash'}
         }],
         annotations=annotations,
-        hoverlabel=dict(bgcolor='#F19F4D', bordercolor='#A9A9A9', font=dict(family='Arial', size=12, color='white'), )
+        hoverlabel=dict(
+            bgcolor='#F19F4D',
+            bordercolor='#A9A9A9',
+            font=dict(
+                family='Arial',
+                size=12,
+                color='white'
+            ),
+        ),
+        autosize=True
     )
 
-def getLayoutBarChartCoag(threshold, yaxis_title, annotations):
+
+def get_barchart_layout_coag(
+    threshold,
+    yaxis_title,
+    annotations
+):
     return go.Layout(
         margin={'l': 70, 'b': 100, 't': 70, 'r': 70},
         paper_bgcolor='#EFEFEF',
         plot_bgcolor='#EFEFEF',
-        xaxis=dict(title='Sample name', showticklabels=True, tickangle=70, autorange=True, showgrid=True, showline=True,
-                   titlefont={'family': 'Arial, sans-serif', 'size': 16, 'color': 'black'}, zeroline=True,
-                   tickfont={'size': 10, 'color': 'dimgray'}, ticks='', ),
-        yaxis=dict(title=yaxis_title, titlefont=dict(family='Arial, sans-serif', size=16, color='black'),
-                   autorange=True, showgrid=True, zeroline=False, showline=False,
-                   ticks='', showticklabels=True, tickfont={'size': 10, 'color': 'dimgray'}),
+        xaxis=dict(
+            title='Sample name',
+            showticklabels=True,
+            tickangle=70,
+            autorange=True,
+            showgrid=True,
+            showline=True,
+            titlefont={
+                'family': 'Arial, sans-serif',
+                'size': 16,
+                'color': 'black'
+            },
+            zeroline=True,
+            tickfont={'size': 10, 'color': 'dimgray'},
+            ticks='',
+        ),
+        yaxis=dict(
+            title=yaxis_title,
+            titlefont=dict(
+                family='Arial, sans-serif',
+                size=16,
+                color='black'
+            ),
+            autorange=True,
+            showgrid=True,
+            zeroline=False,
+            showline=False,
+            ticks='',
+            showticklabels=True,
+            tickfont={'size': 10, 'color': 'dimgray'}
+        ),
         shapes=[{
-            'type': 'line', 'xref': 'paper', 'opacity': 0.8, 'x0': 0, 'y0': threshold, 'x1': 1, 'y1': threshold,
+            'type': 'line',
+            'xref': 'paper',
+            'opacity': 0.8,
+            'x0': 0, 'y0': threshold,
+            'x1': 1,
+            'y1': threshold,
             'line': {'color': 'red', 'width': 2, 'dash': 'dash'}
         }],
         annotations=annotations,
-        hoverlabel=dict(bgcolor='#F19F4D', bordercolor='#A9A9A9', font=dict(family='Arial', size=12, color='white'), )
+        hoverlabel=dict(
+            bgcolor='#F19F4D',
+            bordercolor='#A9A9A9',
+            font=dict(
+                family='Arial',
+                size=12,
+                color='white'
+            )
+        ),
+        autosize=True
     )
 
-def addAnnotatHeatmap(coordinate, gene_name, arrow_color, ay, label=True):
-    if label == True:
-        return dict(x=coordinate,
-                   y=coordinate,
-                   xref='x',
-                   yref='y',
-                   text='<b>{}</b>'.format(gene_name),
-                   showarrow=True,
-                   arrowcolor=arrow_color,
-                   arrowsize=1,
-                   arrowwidth=2,
-                   arrowhead=5,
-                   ax=0,
-                   ay=ay,
-                   font=dict(
-                       color="dimgrey",
-                       size=15,
-                       family='Arial'
-                   ))
+
+def add_heatmap_annot(
+    coordinate,
+    gene_name,
+    arrow_color,
+    ay,
+    label=True
+):
+    if label is True:
+        return dict(
+            x=coordinate,
+            y=coordinate,
+            xref='x',
+            yref='y',
+            text='<b>{}</b>'.format(gene_name),
+            showarrow=True,
+            arrowcolor=arrow_color,
+            arrowsize=1,
+            arrowwidth=2,
+            arrowhead=5,
+            ax=0,
+            ay=ay,
+            font=dict(
+                color=arrow_color,
+                size=15,
+                family='Arial'
+            )
+        )
     else:
-        return dict(x=coordinate,
-                    y=coordinate,
-                    xref='x',
-                    yref='y',
-                    showarrow=True,
-                    arrowcolor=arrow_color,
-                    arrowsize=1,
-                    arrowwidth=2,
-                    arrowhead=5,
-                    ax=0,
-                    ay=ay,
-                    font=dict(
-                        color="dimgrey",
-                        size=15,
-                        family='Arial'
-                    ))
+        return dict(
+            x=coordinate,
+            y=coordinate,
+            xref='x',
+            yref='y',
+            showarrow=True,
+            arrowcolor=arrow_color,
+            arrowsize=1,
+            arrowwidth=2,
+            arrowhead=5,
+            ax=0,
+            ay=ay,
+            font=dict(
+                color=arrow_color,
+                size=15,
+                family='Arial'
+            )
+        )
