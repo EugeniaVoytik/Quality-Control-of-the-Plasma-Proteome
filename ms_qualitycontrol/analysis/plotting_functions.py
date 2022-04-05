@@ -69,7 +69,7 @@ def get_heatmap(data, annotation):
 
     # Edit Layout
     figure['layout'].update({
-        'width': 740, 'height': 740, 'margin': {
+        'width': 710, 'height': 710, 'margin': {
             'l': 20, 'b': 50, 't': 20, 'r': 0},
         'showlegend': False, 'hovermode': 'closest',
         'paper_bgcolor': '#EFEFEF',
@@ -149,7 +149,7 @@ def get_volcano_figure(
 
 def get_volcano_layout():
     return go.Layout(
-        height=700, width=500,
+        height=680, width=500,
         margin={'l': 40, 'b': 40, 't': 40, 'r': 20},
         paper_bgcolor='#EFEFEF',
         plot_bgcolor='#EFEFEF',
@@ -321,7 +321,8 @@ def get_barchart_layout_coag(
                 size=12,
                 color='white'
             )
-        )
+        ),
+        autosize=True
     )
 
 
