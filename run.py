@@ -46,4 +46,8 @@ if __name__ == '__main__':
 
     du.configure_upload(app, dir_path, use_upload_id=True)
 
-    app.run_server(threaded=True)
+    app.run_server(
+        debug=True, use_reloader=True,  # comment for the server
+        threaded=True,
+        host="0.0.0.0", port="8050"
+    )

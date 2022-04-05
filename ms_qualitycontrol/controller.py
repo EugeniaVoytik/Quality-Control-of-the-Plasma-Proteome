@@ -781,7 +781,9 @@ def update_volcano_clicked_gene(
      Input('radio-button-erythrocytes', 'value'),
      Input('slider-erythro', 'value'),
      Input('radio-button-coagulation', 'value'),
-     Input('slider-coag', 'value')])
+     Input('slider-coag', 'value'),
+     Input('output-control', 'children'),
+     Input('button-report', 'n_clicks')])
 def create_report(
     jsonified_df,
     barchart_plat,
@@ -792,10 +794,13 @@ def create_report(
     radio_erythro,
     slider_erythro,
     radio_coag,
-    slider_coag
+    slider_coag,
+    warning_control,
+    _report_btn_clicks
 ):
-    df = pd.read_json(jsonified_df, orient='split')
-    if not df.empty:
+    changed_id = [p['prop_id'] for p in callback_context.triggered][0]
+    if 'button-report' in changed_id and not warning_control and jsonified_df:
+        df = pd.read_json(jsonified_df, orient='split')
         eigth_col = df.columns[8]
         if radio_plat == 'rat':
             plat_row_name = 'plat_contamination_ratio_SD' + str(slider_plat) \

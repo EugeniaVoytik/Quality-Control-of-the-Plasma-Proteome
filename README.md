@@ -23,6 +23,7 @@ Before entering the platform, MS data are analyzed by MaxQuant or similar softwa
 To start working with the tool, the user needs to:
 - Upload own "proteinGroups.txt" file, and then specify the Control (*obligatory) and Sample (*optional) identifiers. Download [attached file](https://github.com/MannLabs/Quality-Control-of-the-Plasma-Proteome/blob/master/data/proteinGroups_Sepsis_log.txt) as an example. Use "healthy" as the "Identifier for Control Group". Click the "Submit" button.
 - Press the "Example" button to upload the example file - `proteinGroups_Weight_loss_study.txt`.
+If you use the website version, take into account the response time (~ 30 sec to build all plots and the GUI). Therefore, it's recommended to deploy and use the tool locally.
 
 ### "Individual sample quality" panel
 To separately assess the individual sample quality with respect to the contamination ratio of each of the three quality marker panels, use "Platelets", "Erythrocytes" and "Coagulation" panels. Samples annotated with their names have poor quality as assessed by the default cut-off value (dashed red line) of three standard deviations from the average contamination ratios. An interactive slider allows changing the threshold value. Hovering with the cursor over the values in the graph allows checking the calculated value and the name of the sample. . For the loaded file, this information can be saved by clicking "Download Calculated Data" after the "Coagulation" panel.
